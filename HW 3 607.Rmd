@@ -1,0 +1,145 @@
+---
+title: "HW 3 Data 607"
+author: "Maryluz Cruz"
+date: "9/12/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## 3.Copy the introductory example. The vector name stores the extracted names.
+
+R> name
+[1] "Moe Szyslak" "Burns, C. Montgomery" "Rev. Timothy Lovejoy"
+[4] "Ned Flanders" "Simpson, Homer" "Dr. Julius Hibbert"
+
+
+(a) Use the tools of this chapter to rearrange the vector so that all elements conform to
+the standard first_name last_name.
+
+```{r}
+require(stringr)
+```
+
+```{r}
+raw.data <-"555-1239Moe Szyslak(636) 555-0113Burns, C. Montgomery555-6542Rev. Timothy Lovejoy555 8904Ned Flanders636-555-3226Simpson, Homer5553642Dr. Julius Hibbert"
+```
+
+Using the code that is provided in the book we first extract all of the names 
+```{r}
+name<-unlist(str_extract_all(raw.data,"[[:alpha:]., ]{2,}"))
+name
+```
+
+Only two names are not in the first name last name format, so one way to change that is by using the str_replace function in order to change the order.Reference to this is in the bottom.  
+```{r}
+names1<-(str_replace(name,"Burns, C. Montgomery","C. Montgomery Burns"))
+fnamelname<-(str_replace(names1,"Simpson, Homer","Homer Simpson"))
+fnamelname
+```
+
+We put the names in the data.frame so that it can be listed. 
+```{r}
+names3<-data.frame(fnamelname)
+names3
+```
+
+
+
+Using the code that was used to extract the names to build on the code and the Stringr cheat sheet which list all the Regular Expressions along with explanations of what they are we can make a logical vector to see if a name has a title or if there is a second name. 
+
+(b) Construct a logical vector indicating whether a character has a title (i.e., Rev. and
+Dr.).
+
+```{r}
+tname<-str_detect(fnamelname,"\\w[:alpha:]+\\.{1,2}")
+tname 
+str_extract(fnamelname,"\\w[:alpha:]+\\.{1,2}")
+```
+
+
+(c) Construct a logical vector indicating whether a character has a second name.
+
+```{r}
+sname<-str_detect(fnamelname,"[:upper:]+\\.{1,}")
+sname
+str_extract(fnamelname,"[:upper:]+\\.{1,}")
+```
+
+
+## 4.Describe the types of strings that conform to the following regular expressions andconstruct an example that is matched by the regular expression.
+
+
+(a) [0-9]+\\$
+
+This a string of numbers that is from 0-9 and is followed by $ sign.
+```{r}
+ex1<-"6163$dfase16464$dfpiowejof445245644$"
+str_extract_all(ex1,"[0-9]+\\$")
+```
+
+
+(b) \\b[a-z]{1,4}\\b
+
+Word bounderies from a-z and words that have one to four letters. 
+```{r}
+ex2<-"The four letter word is nice"
+str_extract_all(ex2,"\\b[a-z]{1,4}\\b")
+```
+
+(c) .*?\\.txt$
+
+Searches for words that have the extension .txt in the end.
+```{r}
+ex3<-c("yes.html","no.csv","baseball.txt","basketball.txt","this.com")
+str_extract(ex3,".*?\\.txt$")
+```
+
+(d) \\d{2}/\\d{2}/\\d{4}
+
+Digits that are spaced out like 12/12/1234 so its two numbers before / then another two then / four numbers.
+```{r}
+ex4<-"54/15/1486/4646/45/6456/4165/454/65"
+str_extract_all(ex4,"\\d{2}/\\d{2}/\\d{4}")
+```
+
+
+(e) <(.+?)>.+?</\\1>
+
+Words that begin <> and end with </ > and the inside of either set of arrows has to be the same or else it would not be recognised. 
+```{r}
+ex5<-"<c>why</c>nknlk<x>igvbcui</x>khjgkldfhgohdfn<r>there</r>nohio<o>hjkgjk</c>"
+str_extract_all(ex5,"<(.+?)>.+?</\\1>")
+```
+
+## 9.The following code hides a secret message. Crack it with R and regular expressions.Hint: Some of the characters are more revealing than others! The code snippet is also available in the materials at www.r-datacollection.com.
+
+clcopCow1zmstc0d87wnkig7OvdicpNuggvhryn92Gjuwczi8hqrfpRxs5Aj5dwpn0Tanwo
+Uwisdij7Lj8kpf03AT5Idr3coc0bt7yczjatOaootj55t3Nj3ne6c4Sfek.r1w1YwwojigO
+d6vrfUrbz2.2bkAnbhzgv4R9i05zEcrop.wAgnb.SqoU65fPa1otfb7wEm24k6t3sR9zqe5
+fy89n6Nd5t9kc4fE905gmc4Rgxo5nhDk!gr
+
+Using the hint provided one can notice the capital letters and the puntuations, so you have to find a way to extract the capital letters and the puntuations. 
+
+```{r}
+smsg<-"clcopCow1zmstc0d87wnkig7OvdicpNuggvhryn92Gjuwczi8hqrfpRxs5Aj5dwpn0Tanwo
+Uwisdij7Lj8kpf03AT5Idr3coc0bt7yczjatOaootj55t3Nj3ne6c4Sfek.r1w1YwwojigO
+d6vrfUrbz2.2bkAnbhzgv4R9i05zEcrop.wAgnb.SqoU65fPa1otfb7wEm24k6t3sR9zqe5
+fy89n6Nd5t9kc4fE905gmc4Rgxo5nhDk!gr"
+
+smsg1<-str_extract_all(smsg,"[[:upper:].!]")
+smsg1
+
+```
+
+
+
+
+References
+How to replace a word inside a string
+https://www.tutorialrepublic.com/faq/how-to-replace-a-word-inside-a-string-in-php.php
+
+Stringr Cheat Sheet
+http://edrub.in/CheatSheets/cheatSheetStringr.pdf
